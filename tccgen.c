@@ -2395,9 +2395,11 @@ static void gv_dup(void)
     vtop->r = r;
 }
 
-#if PTR_SIZE == 4
+/*FIXME the following is quick hack to make the compiler compiles for RISCV32, 
+need to check what macros get defined when RISCV and change below condition */
+#if PTR_SIZE != 4
 /* generate CPU independent (unsigned) long long operations */
-static void gen_opl(int op)
+void gen_opl(int op)
 {
     int t, a, b, op1, c, i;
     int func;

@@ -162,7 +162,7 @@ ST_FUNC void relocate_plt(TCCState *s1)
         for_each_elem(s1->got->relocplt, 0, rel, ElfW_Rel) {
 	    int sym_index = ELFW(R_SYM)(rel->r_info);
 	    ElfW(Sym) *sym = &((ElfW(Sym) *)symtab_section->data)[sym_index];
-            write64le(p + rel->r_offset, mem ? sym->st_value + rel->r_addend : s1->plt->sh_addr);
+            // write64le(p + rel->r_offset, mem ? sym->st_value + rel->r_addend : s1->plt->sh_addr);
 	}
     }
 }
@@ -294,7 +294,7 @@ void relocate(TCCState *s1, ElfW_Rel *rel, int type, unsigned char *ptr,
             qrel->r_offset = rel->r_offset;
             qrel->r_info = ELFW(R_INFO)(0, R_RISCV_RELATIVE);
             /* Use sign extension! */
-            qrel->r_addend = (int)read32le(ptr) + val;
+            // qrel->r_addend = (int)read32le(ptr) + val;
             qrel++;
         }
         add32le(ptr, val);
@@ -305,12 +305,12 @@ void relocate(TCCState *s1, ElfW_Rel *rel, int type, unsigned char *ptr,
             qrel->r_offset = rel->r_offset;
             if (esym_index) {
                 qrel->r_info = ELFW(R_INFO)(esym_index, R_RISCV_64);
-                qrel->r_addend = rel->r_addend;
+                // qrel->r_addend = rel->r_addend;
                 qrel++;
                 break;
             } else {
                 qrel->r_info = ELFW(R_INFO)(0, R_RISCV_RELATIVE);
-                qrel->r_addend = read64le(ptr) + val;
+                // qrel->r_addend = read64le(ptr) + val;
                 qrel++;
             }
         }
