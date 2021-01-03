@@ -37,6 +37,18 @@
 #include "tcc.h"
 #include <assert.h>
 
+#if (PTR_SIZE == 4)
+ST_DATA const char *target_machine_defs =
+    "__riscv\0"
+    "__riscv_xlen 32\0"
+    "__riscv_flen 32\0"
+    "__riscv_div\0"
+    "__riscv_mul\0"
+    "__riscv_fdiv\0"
+    "__riscv_fsqrt\0"
+    "__riscv_float_abi_double\0"
+    ;
+#else
 ST_DATA const char *target_machine_defs =
     "__riscv\0"
     "__riscv_xlen 64\0"
@@ -47,17 +59,20 @@ ST_DATA const char *target_machine_defs =
     "__riscv_fsqrt\0"
     "__riscv_float_abi_double\0"
     ;
+#endif
 
-#define XLEN 8
-
-#define TREG_RA 17
-#define TREG_SP 18
 
 #if (PTR_SIZE == 4)
 #define Ins_Len_Op  2
+#define XLEN 4
 #else 
 #define Ins_Len_Op  3
+#define XLEN 8
 #endif
+
+
+#define TREG_RA 17
+#define TREG_SP 18
 
 
 ST_DATA const int reg_classes[NB_REGS] = {
@@ -987,7 +1002,13 @@ static void gen_opil(int op, int ll)
 {
     int a, b, d;
     int func3 = 0;
+
+    #if (PTR_SIZE == 4)
     ll = 0;
+    #else
+    ll = ll ? 0 : 8;
+    #endif
+
     if ((vtop->r & (VT_VALMASK | VT_LVAL | VT_SYM)) == VT_CONST) {
         int fc = vtop->c.i;
         if (fc == vtop->c.i && !(((unsigned)fc + (1 << 11)) >> 12)) {

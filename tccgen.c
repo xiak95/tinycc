@@ -2395,9 +2395,8 @@ static void gv_dup(void)
     vtop->r = r;
 }
 
-/*FIXME the following is quick hack to make the compiler compiles for RISCV32, 
-need to check what macros get defined when RISCV and change below condition */
-#if PTR_SIZE != 4
+//FIXME change ARCH to riscv32 when riscv32 is available everywhere 
+#if (PTR_SIZE == 4 && ARCH!=riscv64)
 /* generate CPU independent (unsigned) long long operations */
 void gen_opl(int op)
 {
