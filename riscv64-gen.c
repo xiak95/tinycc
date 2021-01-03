@@ -783,7 +783,7 @@ ST_FUNC void gfunc_prolog(Sym *func_sym)
     if (size > 2 * XLEN) {
         loc -= 8;
         func_vc = loc;
-         EI(0x23, Ins_Len_Op, 8, 10 + areg[0]++, loc); // sd a0, loc(s0)
+        ES(0x23, Ins_Len_Op, 8, 10 + areg[0]++, loc); // sd a0, loc(s0)
     }
     /* define parameters */
     while ((sym = sym->next) != NULL) {
@@ -1356,7 +1356,7 @@ ST_FUNC void gen_vla_sp_save(int addr)
 
 ST_FUNC void gen_vla_sp_restore(int addr)
 {
-    ES(0x03, Ins_Len_Op, 2, 8, addr); // ld sp, fc(s0)
+    EI(0x03, Ins_Len_Op, 2, 8, addr); // ld sp, fc(s0)
 }
 
 ST_FUNC void gen_vla_alloc(CType *type, int align)
