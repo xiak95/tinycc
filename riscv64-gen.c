@@ -234,6 +234,7 @@ static int load_symofs(int r, SValue *sv, int forstore)
     return rr;
 }
 
+/*Must generate the code needed to load a stack value into a register.*/
 ST_FUNC void load(int r, SValue *sv)
 {
     int fr = sv->r;
@@ -379,6 +380,7 @@ ST_FUNC void load(int r, SValue *sv)
       tcc_error("unimp: load(non-const)");
 }
 
+/*Must generate the code needed to store a register into a stack value lvalue.*/
 ST_FUNC void store(int r, SValue *sv)
 {
     int fr = sv->r & VT_VALMASK;
@@ -551,6 +553,7 @@ static void reg_pass(CType *type, int *prc, int *fieldofs, int named)
     }
 }
 
+/*Should generate a function call*/
 ST_FUNC void gfunc_call(int nb_args)
 {
     int i, align, size, areg[2];
@@ -761,6 +764,7 @@ done:
 
 static int func_sub_sp_offset, num_va_regs, func_va_list_ofs;
 
+/*Should generate a function prolog*/
 ST_FUNC void gfunc_prolog(Sym *func_sym)
 {
     CType *func_type = &func_sym->type;
@@ -876,6 +880,7 @@ ST_FUNC void arch_transfer_ret_regs(int aftercall)
     vtop--;
 }
 
+/*Should generate a function epilog*/ 
 ST_FUNC void gfunc_epilog(void)
 {
     int v, saved_ind, d, large_ofs_ind;
@@ -1135,6 +1140,8 @@ static void gen_opil(int op, int ll)
     }
 }
 
+/*Must generate the binary integer operation op on the two top entries of the stack which are guaranteed to contain integer types.
+  The result value should be put on the stack. */
 ST_FUNC void gen_opi(int op)
 {
     gen_opil(op, 0);
@@ -1145,6 +1152,8 @@ ST_FUNC void gen_opl(int op)
     gen_opil(op, 1);
 }
 
+/*Same as gen_opi() for floating point operations.
+ The two top entries of the stack are guaranteed to contain floating point values of same types. */
 ST_FUNC void gen_opf(int op)
 {
     int rs1, rs2, rd, dbl, invert;
@@ -1244,6 +1253,7 @@ ST_FUNC void gen_cvt_sxtw(void)
        Let's try to not do anything here.  */
 }
 
+/*Integer to floating point conversion. */
 ST_FUNC void gen_cvt_itof(int t)
 {
     int rr = ireg(gv(RC_INT)), dr;
@@ -1270,6 +1280,7 @@ ST_FUNC void gen_cvt_itof(int t)
     }
 }
 
+/*Floating point to floating point of different size conversion.*/
 ST_FUNC void gen_cvt_ftoi(int t)
 {
     int ft = vtop->type.t & VT_BTYPE;
