@@ -730,7 +730,7 @@ ST_FUNC void gfunc_call(int nb_args)
                 vtop->r2 = r2;
             }
             if (info[nb_args - 1 - i] & 16) {
-                EI(0x23, Ins_Len_Op, 2, ireg(vtop->r2), splitofs); // sd t0, ofs(sp)
+                ES(0x23, Ins_Len_Op, 2, ireg(vtop->r2), splitofs); // sd t0, ofs(sp)
                 vtop->r2 = VT_CONST;
             } else if (loadt == VT_LDOUBLE && vtop->r2 != r2) {
                 assert(vtop->r2 <= 7 && r2 <= 7);
@@ -815,11 +815,11 @@ ST_FUNC void gfunc_prolog(Sym *func_sym)
                     assert(i == 1 && regcount == 2 && !(addr & 7));
                     EI(0x03, Ins_Len_Op, 5, 8, addr); // ld t0, addr(s0)
                     addr += 8;
-                     EI(0x23, Ins_Len_Op, 8, 5, loc + i*8); // sd t0, loc(s0)
+                    ES(0x23, Ins_Len_Op, 8, 5, loc + i*8); // sd t0, loc(s0)
                 } else if (prc[1+i] == RC_FLOAT) {
                     ES(0x27, (size / regcount) == 4 ? 2 : 3, 8, 10 + areg[1]++, loc + (fieldofs[i+1] >> 4)); // fs[wd] FAi, loc(s0)
                 } else {
-                     EI(0x23, Ins_Len_Op, 8, 10 + areg[0]++, loc + i*8); // sd aX, loc(s0) // XXX
+                    ES(0x23, Ins_Len_Op, 8, 10 + areg[0]++, loc + i*8); // sd aX, loc(s0) // XXX
                 }
             }
         }
@@ -832,7 +832,7 @@ ST_FUNC void gfunc_prolog(Sym *func_sym)
     if (func_var) {
         for (; areg[0] < 8; areg[0]++) {
             num_va_regs++;
-             EI(0x23, Ins_Len_Op, 8, 10 + areg[0], -8 + num_va_regs * 8); // sd aX, loc(s0)
+            ES(0x23, Ins_Len_Op, 8, 10 + areg[0], -8 + num_va_regs * 8); // sd aX, loc(s0)
         }
     }
 #ifdef CONFIG_TCC_BCHECK
@@ -910,8 +910,8 @@ ST_FUNC void gfunc_epilog(void)
 
     ind = func_sub_sp_offset;
     EI(0x13, 0, 2, 2, -d);     // addi sp, sp, -d
-     EI(0x23, Ins_Len_Op, 2, 1, d - 8 - num_va_regs * 8);  // sd ra, d-8(sp)
-     EI(0x23, Ins_Len_Op, 2, 8, d - 16 - num_va_regs * 8); // sd s0, d-16(sp)
+    ES(0x23, Ins_Len_Op, 2, 1, d - 8 - num_va_regs * 8);  // sd ra, d-8(sp)
+    ES(0x23, Ins_Len_Op, 2, 8, d - 16 - num_va_regs * 8); // sd s0, d-16(sp)
     if (v < (1 << 11))
       EI(0x13, 0, 8, 2, d - num_va_regs * 8);      // addi s0, sp, d
     else
@@ -1351,12 +1351,12 @@ ST_FUNC void ggoto(void)
 
 ST_FUNC void gen_vla_sp_save(int addr)
 {
-     EI(0x23, Ins_Len_Op, 8, 2, addr); // sd sp, fc(s0)
+    ES(0x23, Ins_Len_Op, 8, 2, addr); // sd sp, fc(s0)
 }
 
 ST_FUNC void gen_vla_sp_restore(int addr)
 {
-    EI(0x03, Ins_Len_Op, 2, 8, addr); // ld sp, fc(s0)
+    ES(0x03, Ins_Len_Op, 2, 8, addr); // ld sp, fc(s0)
 }
 
 ST_FUNC void gen_vla_alloc(CType *type, int align)
