@@ -107,6 +107,9 @@ PROGS = tcc$(EXESUF)
 TCCLIBS = $(LIBTCCDEF) $(LIBTCC) $(LIBTCC1)
 TCCDOCS = tcc.1 tcc-doc.html tcc-doc.info
 
+debug: $(PROGS)
+CONFIG_strip=no
+
 all: $(PROGS) $(TCCLIBS) $(TCCDOCS)
 
 # cross libtcc1.a targets to build
